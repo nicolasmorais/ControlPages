@@ -10,10 +10,11 @@ import { V3Page } from '@/components/page-versions/V3Page';
 import { HairCarePage } from '@/components/page-versions/HairCarePage'; // NEW
 import APPage from '@/components/page-versions/APPage';
 import { AdvinsuPage } from '@/components/page-versions/AdvinsuPage';
+import { SalesPageV1 } from '@/components/page-versions/SalesPageV1';
 import CustomAdvertorialPage from '@/components/page-versions/CustomAdvertorialPage';
 import { BackRedirect } from '@/components/page-versions/BackRedirect';
 
-const STATIC_PAGE_IDS = ['v1', 'v2', 'v3', 'ap', 'cavalo-de-raca', 'advinsu'];
+const STATIC_PAGE_IDS = ['v1', 'v2', 'v3', 'ap', 'cavalo-de-raca', 'advinsu', 'sales'];
 
 function ContentSwitcher({ contentId }: { contentId: string }) {
   try {
@@ -25,6 +26,7 @@ function ContentSwitcher({ contentId }: { contentId: string }) {
         case 'ap': return <APPage />;
         case 'cavalo-de-raca': return <HairCarePage />; // NEW
         case 'advinsu': return <AdvinsuPage />;
+        case 'sales': return <SalesPageV1 />;
         default: return <CustomAdvertorialPage advertorialId={contentId} />;
       }
     };
@@ -59,6 +61,7 @@ export async function generateMetadata({ params }: DynamicPageProps): Promise<Me
     'ap': 'Página de Aprovação - Control Pages',
     'cavalo-de-raca': 'Cuidado Capilar Avançado - Control Pages',
     'advinsu': 'Bella Diaries - Desinflamando o Pâncreas',
+    'sales': 'InsuBeta - Tratamento Raiz para Glicose',
   };
 
   if (staticTitles[slugKey]) {
