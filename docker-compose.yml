@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  web:
+    # Substitua 'your-github-username/your-repo-name' pelo caminho real da imagem no GHCR.
+    # Os usuários precisarão atualizar isso para sua própria imagem após o build com GitHub Actions.
+    image: ghcr.io/your-github-username/your-repo-name:latest
+    container_name: dyad-app-web
+
+    # Permite a alteração da porta: Mapeia a porta do contêiner 3000 (onde o Next.js roda)
+    # para a porta do host 3000. Os usuários podem mudar "3000:3000" no docker-compose.yml para, por exemplo, "8080:3000" para acessar na porta 8080.
+    ports:
+      - "3000:3000"
+
+    # Mapeia um diretório para manter o arquivo JSON do DB (para persistência)
+    # Isso cria um volume nomeado para armazenamento persistente de dados,
+    # ou você pode mapear um caminho do host (ex: "./data:/app/data").
+    volumes:
+      - dyad_db_data:/app/data
+
+    # Opcionalmente define variáveis de ambiente
+    # Substitui ENVs definidos no Dockerfile
+    environment:
+      NODE_ENV: production
+      # Define o DATABASE_DIR para corresponder ao mapeamento de volume
+      DATABASE_DIR: /app/data
+      # Chave de API para ipgeolocation.io (DEVE SER DEFINIDA NO .env ou Dyad UI)
+      IPGEOLOCATION_API_KEY: YOUR_IPGEOLOCATION_API_KEY
+      # Chave de API para Mapbox (DEVE SER DEFINIDA NO .env ou Dyad UI)
+      MAPBOX_TOKEN: YOUR_MAPBOX_TOKEN
+      
+      # Variáveis de Conexão PostgreSQL (Usadas pelo serviço 'web')
+      DATABASE_URL: YOUR_DATABASE_URL
+      
+    # Removendo a dependência do serviço de banco de dados local
+    # depends_on:
+    #   - db
+
+    # Política de reinicialização do contêiner
+    restart: unless-stopped
+
+  # O serviço 'db' foi removido pois estamos usando um banco de dados externo.
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: dyad-app-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: mydatabase
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     # Mapeia a porta do PostgreSQL para a porta 5432 do host (opcional, mas útil para ferramentas externas)
+  #     - "5432:5432"
+
+# Define os volumes nomeados usados pelos serviços
+volumes:
+  dyad_db_data:
+  # O volume 'postgres_data' foi removido
+  # postgres_data:

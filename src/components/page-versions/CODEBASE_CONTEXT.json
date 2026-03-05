@@ -1,0 +1,610 @@
+{
+  "projectMetadata": {
+    "name": "Elabela",
+    "owner": "nicolasmorais",
+    "repository": "nicolasmorais/Elabela",
+    "repositoryUrl": "https://github.com/nicolasmorais/Elabela",
+    "description": "Um template Next.js moderno e pronto para produção, otimizado para deployment containerizado com Docker e GitHub Container Registry (GHCR). Fornece um boilerplate robusto para construir aplicações web completas com React, integração com APIs externas, banco de dados JSON e CI/CD automatizado.",
+    "primaryPurpose": "Fornecer uma base sólida e escalável para projetos Next.js que precisam de containerização, persistência de dados simples (JSON), API proxying e deployment automático em plataformas como Dyad.",
+    "version": "0.1.0",
+    "license": "Apache 2.0",
+    "visibility": "public",
+    "createdAt": "2026-03-04"
+  },
+
+  "techStack": {
+    "framework": {
+      "name": "Next.js",
+      "version": "15.1.7",
+      "router": "App Router",
+      "description": "React framework para full-stack web applications"
+    },
+    "language": {
+      "name": "TypeScript",
+      "version": "^5",
+      "description": "Type-safe JavaScript"
+    },
+    "ui": {
+      "componentLibrary": {
+        "name": "Shadcn/UI",
+        "basedOn": ["Radix UI", "Tailwind CSS"],
+        "directory": "src/components/ui/",
+        "description": "Componentes reutilizáveis de alta qualidade"
+      },
+      "styling": {
+        "name": "Tailwind CSS",
+        "version": "^3.4.1",
+        "approach": "utility-first",
+        "globalStyles": "src/app/globals.css"
+      },
+      "icons": {
+        "name": "Lucide React",
+        "version": "^0.511.0",
+        "format": "SVG vectors",
+        "description": "Ícones simples e bonitos"
+      },
+      "animations": {
+        "primary": "tailwindcss-animate",
+        "secondary": "Radix UI built-in animations"
+      }
+    },
+    "forms": {
+      "stateManagement": {
+        "name": "React Hook Form",
+        "version": "^7.56.4"
+      },
+      "validation": {
+        "name": "Zod",
+        "integration": "@hookform/resolvers"
+      }
+    },
+    "database": {
+      "type": "JSON file-based",
+      "library": "lowdb",
+      "location": "/data/db.json",
+      "customizable": "DATABASE_DIR environment variable",
+      "description": "Lightweight, JavaScript-only database",
+      "schemaFile": "src/lib/database.ts"
+    },
+    "stateManagement": {
+      "local": "React hooks (useState, useReducer)",
+      "global": "React Context API",
+      "complexity": "Para estado complexo, considerar Zustand ou Jotai"
+    },
+    "notifications": {
+      "name": "Sonner",
+      "version": "^2.0.3",
+      "component": "src/components/ui/sonner.tsx"
+    },
+    "charts": {
+      "name": "Recharts",
+      "version": "^2.15.3",
+      "component": "src/components/ui/chart.tsx"
+    },
+    "containerization": {
+      "orchestration": "Docker & Docker Compose",
+      "registry": "GitHub Container Registry (GHCR)",
+      "nodeVersion": "^18+"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.26.1",
+      "lockFile": "pnpm-lock.yaml"
+    },
+    "runtime": {
+      "node": "v18+ (v20 recomendado)"
+    }
+  },
+
+  "directoryStructure": {
+    "root": {
+      "src/": {
+        "description": "Código-fonte da aplicação",
+        "subdirectories": {
+          "app/": {
+            "description": "Next.js App Router (páginas, layouts, API routes)",
+            "note": "File-system based routing",
+            "subdirectories": {
+              "api/": "Route Handlers (server-side API endpoints)"
+            }
+          },
+          "components/": {
+            "description": "Componentes React reutilizáveis",
+            "subdirectories": {
+              "ui/": "Componentes Shadcn/UI (shadcn-curated)"
+            }
+          },
+          "hooks/": {
+            "description": "Custom React Hooks",
+            "example": "src/hooks/use-mobile.tsx"
+          },
+          "lib/": {
+            "description": "Funções utilitárias e lógica compartilhada",
+            "files": {
+              "database.ts": "Integração lowdb, DbSchema interface, funções de persistência",
+              "utils.ts": "Funções helper genéricas"
+            }
+          },
+          "middleware.ts": "Next.js Middleware para interceptar requests"
+        }
+      },
+      "pages/": {
+        "description": "Possíveis páginas adicionais (legacy ou custom routing)"
+      },
+      "public/": {
+        "description": "Assets estáticos (imagens, fontes, arquivos)"
+      },
+      "data/": {
+        "description": "Diretório para db.json (JSON database)",
+        "note": "Criado automaticamente na primeira execução"
+      },
+      ".github/": {
+        "subdirectories": {
+          "workflows/": {
+            "files": {
+              "main.yml": "GitHub Actions CI/CD pipeline (build + push GHCR)"
+            }
+          }
+        }
+      },
+      "configFiles": {
+        "docker-compose.yml": "Configuração Docker Compose para desenvolvimento local",
+        "Dockerfile": "Especificação da imagem Docker (multi-stage build)",
+        "next.config.ts": "Configuração Next.js (API Rewrites, env vars condicionais)",
+        "tailwind.config.ts": "Customização Tailwind CSS, extensões de tema",
+        "tsconfig.json": "Configuração TypeScript (inclui path aliases @/)",
+        "postcss.config.mjs": "Configuração PostCSS (Tailwind)",
+        "components.json": "Configuração Shadcn/UI (para CLI)",
+        "package.json": "Dependências npm/pnpm, scripts",
+        "pnpm-lock.yaml": "Lock file pnpm (reproducibilidade exata)",
+        ".env": "Variáveis de ambiente (local, não commitado)",
+        ".env.example": "Template de variáveis de ambiente",
+        ".gitignore": "Padrões de arquivos ignorados"
+      },
+      "documentation": {
+        "AI_RULES.md": "Guia CRÍTICO para desenvolvimento com IA - READ FIRST! ⭐",
+        "README.md": "Documentação completa: setup, features, deployment",
+        "LICENSE": "Apache 2.0"
+      }
+    }
+  },
+
+  "database": {
+    "type": "JSON file-based (lowdb)",
+    "location": "/data/db.json",
+    "locationEnvVar": "DATABASE_DIR (customize se necessário)",
+    "language": "100% JavaScript (sem dependências nativas)",
+    "defaultSchema": {
+      "examples": [
+        {
+          "id": "string",
+          "title": "string",
+          "description": "string (opcional)",
+          "createdAt": "Date"
+        }
+      ]
+    },
+    "schemaDefinition": {
+      "file": "src/lib/database.ts",
+      "interface": "DbSchema",
+      "note": "Estender interface quando novos dados forem armazenados"
+    },
+    "persistence": {
+      "method": "Explicit db.write() call",
+      "location": "src/lib/database.ts",
+      "trigger": "Após qualquer modificação a db.data"
+    },
+    "dockerPersistence": {
+      "volume": "dyad_db_data",
+      "mapping": "/app/data/db.json",
+      "behavior": "Dados persistem mesmo após container stop"
+    },
+    "characteristics": {
+      "zeroDatabaseSetup": true,
+      "noExternalDependencies": true,
+      "fileBased": true,
+      "automaticCreation": true,
+      "idealFor": "Dados simples, protótipos, MVPs"
+    }
+  },
+
+  "apiProxying": {
+    "description": "Next.js API Rewrites para bypass de CORS e integração com APIs externas",
+    "configFile": "next.config.ts",
+    "mechanism": "async rewrites() function",
+    "conditionalCreation": "Rewrite rules criadas apenas se env var está configurada",
+    "exampleProxies": {
+      "service1": {
+        "clientRequest": "/api/service1/*",
+        "proxiedTo": "EXTERNAL_API_URL_SERVICE1/*",
+        "envVar": "EXTERNAL_API_URL_SERVICE1"
+      },
+      "service2": {
+        "clientRequest": "/api/service2/*",
+        "proxiedTo": "EXTERNAL_API_URL_SERVICE2/*",
+        "envVar": "EXTERNAL_API_URL_SERVICE2"
+      },
+      "weather": {
+        "clientRequest": "/api/weather/*",
+        "proxiedTo": "WEATHER_API_URL/*",
+        "envVar": "WEATHER_API_URL"
+      }
+    },
+    "criticalRules": {
+      "serverSideCalls": "🚩 NUNCA use /api/proxy/* para chamadas server-side a APIs externas",
+      "correctApproach": "Server-side DEVE usar diretamente process.env.EXTERNAL_API_URL_*",
+      "proxyIntention": "Proxy rules são APENAS para client-side (browser) requests",
+      "reasoning": "Server-side roda em Node.js, pode acessar diretamente; proxy é para bypass CORS client-side"
+    },
+    "setupSteps": [
+      "1. Adicionar env var em .env (ex: THIRD_PARTY_API_URL)",
+      "2. Adicionar rewrite rule em next.config.ts",
+      "3. IMPORTANTE: Adicionar env var comentada em docker-compose.yml",
+      "4. Server-side routes usam process.env.THIRD_PARTY_API_URL",
+      "5. Client-side components usam /api/proxy path"
+    ]
+  },
+
+  "environmentVariables": {
+    "required": [],
+    "recommended": {
+      "DATABASE_DIR": {
+        "description": "Diretório onde db.json será armazenado",
+        "default": "./data",
+        "example": "/app/data"
+      },
+      "EXTERNAL_API_URL_SERVICE1": {
+        "description": "Base URL do serviço externo 1",
+        "example": "https://api.example.com",
+        "leaveBlank": "Para desabilitar proxy rule"
+      },
+      "EXTERNAL_API_URL_SERVICE2": {
+        "description": "Base URL do serviço externo 2",
+        "example": "https://api.another.com",
+        "leaveBlank": "Para desabilitar proxy rule"
+      },
+      "WEATHER_API_URL": {
+        "description": "Base URL de APIs de clima",
+        "example": "https://weather.api.com",
+        "leaveBlank": "Para desabilitar proxy rule"
+      }
+    },
+    "configuration": {
+      "localDevelopment": "Definir em .env (arquivo não-commitado)",
+      "dockerCompose": "Comentadas em docker-compose.yml como exemplos",
+      "dyad": "Configurar via UI da plataforma Dyad (environment variables section)"
+    }
+  },
+
+  "npmScripts": {
+    "dev": {
+      "command": "pnpm dev",
+      "description": "Inicia servidor de desenvolvimento (Next.js hot-reload)",
+      "port": 3000
+    },
+    "build": {
+      "command": "pnpm build",
+      "description": "Constrói aplicação para produção"
+    },
+    "start": {
+      "command": "pnpm start",
+      "description": "Inicia servidor em modo produção (após build)"
+    },
+    "lint": {
+      "command": "pnpm lint",
+      "description": "Executa ESLint (Next.js built-in)"
+    }
+  },
+
+  "docker": {
+    "dockerfile": {
+      "strategy": "Multi-stage build",
+      "stages": ["dependencies", "builder", "runner"],
+      "optimization": "Node.js production-optimized"
+    },
+    "dockerCompose": {
+      "file": "docker-compose.yml",
+      "services": {
+        "web": {
+          "image": "Constrói do Dockerfile local",
+          "container_name": "elabela-app",
+          "ports": "3000:3000 (customizável)",
+          "environment": "Variables passadas do .env",
+          "volumes": [
+            "/app/data (dyad_db_data volume)"
+          ]
+        }
+      },
+      "volumes": {
+        "dyad_db_data": {
+          "description": "Persiste db.json entre container runs",
+          "mountPath": "/app/data"
+        }
+      }
+    },
+    "localDevelopment": {
+      "startup": "docker compose up -d",
+      "access": "http://localhost:3000",
+      "logs": "docker compose logs -f web",
+      "shutdown": "docker compose down",
+      "resetDatabase": "docker compose down -v"
+    },
+    "buildLocal": {
+      "command": "docker build -t elabela:local .",
+      "note": "Útil para testar antes de push para GHCR"
+    }
+  },
+
+  "cicd": {
+    "platform": "GitHub Actions",
+    "workflowFile": ".github/workflows/main.yml",
+    "triggers": [
+      "Push to main branch",
+      "Creation of version tags (v*.*.* pattern)"
+    ],
+    "steps": [
+      "Checkout repository",
+      "Build Docker image",
+      "Push to GitHub Container Registry (GHCR)",
+      "Image URL: ghcr.io/nicolasmorais/Elabela:latest (ou :vX.Y.Z para tags)"
+    ],
+    "authentication": {
+      "method": "GITHUB_TOKEN (automatic)",
+      "scope": "Pacotes do repositório (GHCR)"
+    },
+    "imageLocation": "https://github.com/nicolasmorais/Elabela/pkgs/container/elabela"
+  },
+
+  "deployment": {
+    "targetPlatforms": ["Dyad", "Docker-compatible servers"],
+    "dyad": {
+      "configFile": "dyad.yaml",
+      "imageSource": "ghcr.io/nicolasmorais/Elabela:latest",
+      "exposedPort": 3000,
+      "environmentVariables": "Configuráveis via Dyad UI",
+      "setup": "Seguir documentação oficial de Dyad CLI"
+    },
+    "genericDocker": {
+      "command": "docker run -p 3000:3000 -v db_data:/app/data ghcr.io/nicolasmorais/Elabela:latest",
+      "environmentVariables": "Passar via -e flag"
+    }
+  },
+
+  "uiAndStyling": {
+    "componentLibrary": {
+      "name": "Shadcn/UI",
+      "source": "https://ui.shadcn.com",
+      "directory": "src/components/ui/",
+      "basedOn": ["Radix UI (accessibility)", "Tailwind CSS"],
+      "installation": "Via Shadcn CLI (already integrated)",
+      "rule": "Sempre preferir componentes Shadcn/UI"
+    },
+    "styling": {
+      "framework": "Tailwind CSS",
+      "approach": "Utility-first CSS",
+      "globalStyles": {
+        "file": "src/app/globals.css",
+        "content": "Base Tailwind directives, CSS variables, minimal base styling",
+        "avoid": "Component-specific styles aqui (usar utility classes ao invés)"
+      },
+      "cssInJs": {
+        "rule": "❌ NÃO use (Styled Components, Emotion, etc)"
+      }
+    },
+    "icons": {
+      "library": "Lucide React",
+      "format": "SVG vectors",
+      "usage": "import { IconName } from 'lucide-react'; <IconName />"
+    },
+    "animations": {
+      "tailwindcssAnimate": {
+        "description": "Plugin Tailwind para animações"
+      },
+      "radixUI": {
+        "description": "Animações built-in em componentes Radix"
+      }
+    }
+  },
+
+  "developmentRules": {
+    "source": "AI_RULES.md (READ THIS FIRST! ⭐)",
+    "criticalRules": [
+      {
+        "category": "UI Components",
+        "rule": "Sempre use Shadcn/UI (src/components/ui/)",
+        "fallback": "Criar custom component em src/components/ (não adicionar libs third-party sem discussão)"
+      },
+      {
+        "category": "Styling",
+        "rule": "Exclusivamente Tailwind CSS",
+        "avoid": "CSS-in-JS, imports CSS externos, inline styles"
+      },
+      {
+        "category": "Icons",
+        "rule": "Usar lucide-react SEMPRE",
+        "avoid": "Outras icon libraries"
+      },
+      {
+        "category": "Forms",
+        "rule": "React Hook Form (estado) + Zod (validação)",
+        "resolver": "@hookform/resolvers"
+      },
+      {
+        "category": "Database",
+        "rule": "Estender DbSchema em src/lib/database.ts quando novos dados",
+        "persistence": "Chamar await db.write() após qualquer modificação"
+      },
+      {
+        "category": "State Management",
+        "local": "useState, useReducer",
+        "global": "React Context API (preferido)",
+        "complex": "Discutir Zustand/Jotai se estado ficar complexo"
+      },
+      {
+        "category": "Routing",
+        "rule": "Next.js App Router (src/app/)",
+        "note": "File-system based routing"
+      },
+      {
+        "category": "API Calls",
+        "clientSide": "fetch() ou wrapper simples",
+        "serverSide": "Next.js Route Handlers (src/app/api/) ou Server Actions",
+        "externalAPIs": "Via rewrite proxy (client) ou direct env var (server)"
+      },
+      {
+        "category": "Imports",
+        "rule": "Use absolute imports: @/components/MyComponent, @/lib/utils",
+        "avoid": "Relative imports como ../../lib/utils"
+      },
+      {
+        "category": "TypeScript",
+        "rule": "100% TypeScript - evite 'any'",
+        "typing": "Strong typing obrigatório"
+      },
+      {
+        "category": "Notifications",
+        "rule": "Sonner component (src/components/ui/sonner.tsx)"
+      },
+      {
+        "category": "Charts",
+        "rule": "Recharts + src/components/ui/chart.tsx"
+      },
+      {
+        "category": "Custom Hooks",
+        "location": "src/hooks/",
+        "example": "src/hooks/use-mobile.tsx"
+      },
+      {
+        "category": "Utility Functions",
+        "location": "src/lib/utils.ts",
+        "note": "Well-typed, reusable purpose"
+      }
+    ]
+  },
+
+  "workflowGuide": {
+    "addNewPage": {
+      "where": "src/app/(optionalGroup)/page.tsx",
+      "method": "File-system routing (App Router)",
+      "language": "TypeScript + Tailwind + Shadcn/UI"
+    },
+    "addNewComponent": {
+      "where": "src/components/MyComponent.tsx",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "baseComponentsFromUI": "src/components/ui/"
+    },
+    "addNewData": {
+      "step1": "Estender DbSchema interface em src/lib/database.ts",
+      "step2": "Inicializar nova coleção em Low() constructor com array/object vazio",
+      "step3": "Usar funções auxiliares em database.ts para CRUD"
+    },
+    "addNewAPIRoute": {
+      "where": "src/app/api/endpoint/route.ts",
+      "format": "Next.js Route Handler (GET, POST, PUT, DELETE)",
+      "language": "TypeScript"
+    },
+    "addNewExternalAPI": {
+      "step1": "Adicionar env var em .env (ex: THIRD_PARTY_API_URL)",
+      "step2": "Adicionar rewrite rule em next.config.ts",
+      "step3": "Adicionar env var comentada em docker-compose.yml",
+      "step4": "Server-side: usar process.env.THIRD_PARTY_API_URL",
+      "step5": "Client-side: usar /api/endpoint/* proxy path"
+    },
+    "addCustomHook": {
+      "where": "src/hooks/useMyHook.tsx",
+      "format": "Standard React hook",
+      "language": "TypeScript"
+    },
+    "addGlobalCSS": {
+      "where": "src/app/globals.css",
+      "content": "Tailwind directives, CSS variables, base styles",
+      "avoid": "Component-specific styling"
+    }
+  },
+
+  "idealUseCase": {
+    "perfect_for": [
+      "Full-stack web applications moderadas",
+      "Dados simples e sem relações complexas",
+      "SaaS que precisa de containerização rápida",
+      "Protótipos e MVPs",
+      "Integrações com múltiplas APIs externas",
+      "Projetos que precisam de CI/CD automático",
+      "Equipes que querem desenvolver com IA assistida"
+    ],
+    "not_ideal_for": [
+      "Aplicações com dados altamente relacionais",
+      "Sistemas que precisam ACID transactions",
+      "Ambientes com milhões de registros",
+      "Necessidade de stored procedures complexas",
+      "Data warehousing ou analytics avançados"
+    ]
+  },
+
+  "quickStart": {
+    "clone": "git clone https://github.com/nicolasmorais/Elabela.git",
+    "enter": "cd Elabela",
+    "install": "pnpm install",
+    "setupEnv": "cp .env.example .env",
+    "editEnv": "nano .env (ou editor preferido)",
+    "runLocal": "docker compose up -d",
+    "access": "http://localhost:3000",
+    "testAPI": "curl http://localhost:3000/api/examples",
+    "stopLocal": "docker compose down",
+    "resetDB": "docker compose down -v"
+  },
+
+  "documentation": {
+    "AI_RULES": {
+      "file": "AI_RULES.md",
+      "importance": "⭐⭐⭐ CRÍTICO - Leia antes de começar",
+      "content": "Tech stack, library guidelines, critical rules, environment setup"
+    },
+    "README": {
+      "file": "README.md",
+      "content": "Project overview, features, prerequisites, setup, local dev, CI/CD, deployment, customization"
+    },
+    "CONFIG_FILES": {
+      "nextConfig": "next.config.ts - Rewrites, experimental features",
+      "dockerfile": "Dockerfile - Build process, stages, optimizations",
+      "dockerCompose": "docker-compose.yml - Local dev orchestration",
+      "tailwind": "tailwind.config.ts - Theme customization, extensions",
+      "tsconfig": "tsconfig.json - Path aliases, compiler options"
+    }
+  },
+
+  "keyContacts": {
+    "repository": "https://github.com/nicolasmorais/Elabela",
+    "maintainer": "nicolasmorais",
+    "issueTracker": "https://github.com/nicolasmorais/Elabela/issues",
+    "discussions": "https://github.com/nicolasmorais/Elabela/discussions"
+  },
+
+  "summary": {
+    "tagline": "Next.js full-stack template com Docker, JSON database, API proxying e GitHub Actions - Perfeito para equipes desenvolvendo com IA",
+    "keyFeatures": [
+      "✅ Next.js 15 (App Router) com TypeScript",
+      "✅ Shadcn/UI + Tailwind CSS para UI moderna",
+      "✅ JSON database (lowdb) sem configuração externa",
+      "✅ API proxying nativo (Next.js Rewrites)",
+      "✅ Docker & Docker Compose inclusos",
+      "✅ GitHub Container Registry integration",
+      "✅ GitHub Actions CI/CD automático",
+      "✅ Dyad-ready para deployment",
+      "✅ AI_RULES.md para desenvolvimento assistido por IA",
+      "✅ React Context API + React Hooks para state",
+      "✅ Sonner para notifications",
+      "✅ Recharts para data visualization"
+    ],
+    "targetAudience": [
+      "Desenvolvedores full-stack",
+      "Equipes usando AI assistants (Claude, ChatGPT, Copilot)",
+      "Startups e produtos em fase MVP",
+      "SaaS applications",
+      "Projetos com múltiplas API integrations"
+    ],
+    "readyForProduction": true,
+    "aiOptimized": true
+  }
+}

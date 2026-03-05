@@ -1,0 +1,202 @@
+{
+  "examples": [],
+  "routes": [
+    {
+      "path": "/",
+      "name": "Página Principal",
+      "contentId": "v1"
+    },
+    {
+      "path": "/v1",
+      "name": "Rota do Advertorial V1",
+      "contentId": "v1"
+    },
+    {
+      "path": "/v2",
+      "name": "Rota do Advertorial V2",
+      "contentId": "v2"
+    },
+    {
+      "path": "/v3",
+      "name": "Rota do Advertorial V3",
+      "contentId": "v3"
+    },
+    {
+      "path": "/aprovado",
+      "name": "Página de Aprovação (Preview)",
+      "contentId": "ap"
+    }
+  ],
+  "approvalPageContent": {
+    "header": {
+      "preTitle": "Bem-Estar e Saúde",
+      "title": "Um Guia Para Uma Rotina Mais Saudável",
+      "subheadline": "Uma nova abordagem para o seu bem-estar diário."
+    },
+    "body": {
+      "imageUrl1": "https://via.placeholder.com/800x400.png?text=Imagem+Principal",
+      "advertorialText": "Este é o espaço para o texto principal do seu advertorial. Fale sobre os benefícios, a história e tudo o que for relevante para convencer o leitor.\n\nVocê pode usar múltiplos parágrafos.",
+      "imageUrl2": "https://via.placeholder.com/800x400.png?text=Imagem+Secundária",
+      "guaranteeText": "Garantia de satisfação de 7 dias. Se você não ficar satisfeito, devolvemos o seu dinheiro sem burocracia."
+    },
+    "pricing": {
+      "prePriceText": "ACESSO AO GUIA COMPLETO",
+      "price": "R$ 29,90",
+      "paymentType": "Pagamento Único",
+      "buttonText": "COMPRAR ACESSO",
+      "buttonUrl": "#",
+      "postButtonText": "Compra segura e acesso imediato."
+    },
+    "footer": {
+      "disclaimers": [
+        {
+          "title": "Isenção de Responsabilidade",
+          "text": "Este conteúdo tem caráter exclusivamente informativo e educacional. Não oferece diagnóstico, tratamento ou cura de condições de saúde. Os resultados podem variar de pessoa para pessoa. Sempre consulte um profissional de saúde qualificado antes de iniciar qualquer mudança na dieta, no consumo de chás, suplementos ou rotina de bem-estar."
+        },
+        {
+          "title": "Declaração de Risco",
+          "text": "O uso de qualquer produto natural deve ser feito com responsabilidade. Pessoas com condições médicas pré-existentes, gestantes, lactantes ou usuários de medicamentos devem buscar orientação profissional antes do consumo."
+        },
+        {
+          "title": "Aviso de Idade",
+          "text": "Conteúdo destinado a maiores de 18 anos."
+        }
+      ],
+      "companyInfo": {
+        "name": "OneConversion Soluções Digitais",
+        "address": "Av. Digital, 123, Sala 4, Aparecida de Goiania - GO",
+        "cnpj": "60.357.932/0001-18",
+        "contact": "suporte@oneconversion.pro"
+      },
+      "policies": [
+        {
+          "title": "Termos e Condições",
+          "trigger": "Termos e Condições",
+          "content": "Ao acessar este site, o usuário concorda que todo o conteúdo exibido — incluindo textos, imagens, vídeos e informações — possui caráter exclusivamente informativo. Os produtos apresentados não substituem consultas, diagnósticos ou recomendações de profissionais da saúde. As informações sobre preços, disponibilidade, frete e políticas comerciais podem ser modificadas a qualquer momento, sem aviso prévio. O uso dos produtos adquiridos é de responsabilidade do consumidor, que deve sempre seguir as orientações descritas na embalagem ou no material que acompanha o produto."
+        },
+        {
+          "title": "Política de Privacidade",
+          "trigger": "Política de Privacidade",
+          "content": "Valorizamos sua privacidade. Todas as informações fornecidas voluntariamente pelo usuário — como nome, e-mail ou dados inseridos em formulários — são utilizadas apenas para fins de atendimento, envio de comunicações solicitadas ou suporte relacionado aos produtos oferecidos. Não compartilhamos, vendemos ou divulgamos dados a terceiros sem autorização do usuário, exceto quando exigido por lei. O usuário pode solicitar a remoção ou alteração de seus dados a qualquer momento por meio de nossos canais de suporte. Consulte esta página regularmente, pois nossa Política de Privacidade pode ser atualizada conforme necessário."
+        },
+        {
+          "title": "Política de Reembolso",
+          "trigger": "Política de Reembolso",
+          "content": "Por se tratar de um produto digital, o acesso ao conteúdo é liberado imediatamente após a confirmação do pagamento. Ainda assim, oferecemos uma política de reembolso transparente para garantir a satisfação do cliente. Você pode solicitar o reembolso em até 7 dias corridos após a compra, conforme o Código de Defesa do Consumidor..."
+        }
+      ],
+      "copyright": "Todos os direitos reservados © 2024 - OneConversion Soluções Digitais"
+    },
+    "pixels": {
+      "metaPixelId": "",
+      "taboolaPixelId": "",
+      "customScripts": "",
+      "useGlobalPixels": true
+    }
+  },
+  "customAdvertorials": [],
+  "auth": {
+    "passwordHash": ""
+  },
+  "pixelConfig": {
+    "metaPixelId": "",
+    "taboolaPixelId": "",
+    "globalScripts": ""
+  },
+  "pageViews": [
+    {
+      "id": "9d8d7347-216d-4b23-8723-8591d72a24a2",
+      "contentId": "v1",
+      "path": "/v1",
+      "timestamp": "2025-12-12T03:49:11.195Z"
+    },
+    {
+      "id": "ffd38dc0-a516-4e1b-a7f1-acef991b021f",
+      "contentId": "v1",
+      "path": "/v1",
+      "timestamp": "2025-12-12T04:14:57.396Z",
+      "country": "Brasil",
+      "regionName": "SP"
+    },
+    {
+      "id": "9555fa6b-0700-4db4-94ff-793420225008",
+      "contentId": "v1",
+      "path": "/v1",
+      "timestamp": "2025-12-12T04:15:13.697Z",
+      "country": "Brasil",
+      "regionName": "SP"
+    },
+    {
+      "id": "f155c3fc-192d-424a-b067-e4af2df8f05c",
+      "contentId": "v1",
+      "path": "/v1",
+      "timestamp": "2025-12-12T04:16:52.316Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "88599693-4a96-4bf7-b2c6-2759dd2ddc3f",
+      "contentId": "v2",
+      "path": "/v2",
+      "timestamp": "2025-12-12T04:17:39.400Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "c02caead-8917-4916-92f4-ef2c22484a1f",
+      "contentId": "v1",
+      "path": "/v1",
+      "timestamp": "2025-12-12T04:21:13.257Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "3c59a076-b694-423e-b5ab-f991a68446d4",
+      "contentId": "v1",
+      "path": "/",
+      "timestamp": "2025-12-12T09:21:48.749Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "50bd7dba-320a-4926-a730-5aded1941667",
+      "contentId": "v1",
+      "path": "/",
+      "timestamp": "2025-12-12T09:21:50.508Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "e9996948-57e2-41ee-9ffa-d4609b9df1a0",
+      "contentId": "v1",
+      "path": "/",
+      "timestamp": "2025-12-12T09:22:26.291Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "428a6399-8bbf-4526-ad09-2fbd1f44361c",
+      "contentId": "v1",
+      "path": "/",
+      "timestamp": "2025-12-13T23:42:17.538Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "9a48de2f-1f24-48f4-b9c9-663f5acff2d0",
+      "contentId": "v1",
+      "path": "/",
+      "timestamp": "2025-12-14T21:13:21.091Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    },
+    {
+      "id": "5d497450-6342-4b5b-afbc-2091ee9b56a6",
+      "contentId": "v1",
+      "path": "/",
+      "timestamp": "2025-12-14T21:49:20.695Z",
+      "country": "Brasil",
+      "regionName": "GO"
+    }
+  ]
+}
