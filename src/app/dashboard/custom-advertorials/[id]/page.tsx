@@ -139,7 +139,14 @@ export default function CustomAdvertorialEditor() {
             return;
         }
         setIsSaving(true);
-        const payload: CustomAdvertorial = { id: isNew ? '' : advertorialId, name, header, blocks, footer, pixels };
+        const payload: CustomAdvertorial = {
+            id: isNew ? '' : advertorialId,
+            name,
+            header,
+            blocks,
+            footer: footer as CustomAdvertorialFooter,
+            pixels
+        };
         try {
             const response = await fetch('/api/custom-advertorials', {
                 method: 'POST',
@@ -170,7 +177,7 @@ export default function CustomAdvertorialEditor() {
                 name: `${name} (Cópia)`,
                 header,
                 blocks,
-                footer,
+                footer: footer as CustomAdvertorialFooter,
                 pixels
             };
 
