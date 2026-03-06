@@ -25,16 +25,16 @@ export function LogoutButton() {
   };
 
   return (
-    <Button 
-      onClick={handleLogout} 
-      variant="ghost" 
+    <Button
+      onClick={handleLogout}
+      variant="ghost"
       className={cn(
-        "w-full h-11 flex items-center justify-start gap-3 px-4 rounded-xl font-semibold transition-all duration-200",
-        "text-slate-500 hover:text-red-600 hover:bg-red-50 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-900/10"
+        "w-full h-10 flex items-center justify-start gap-3 px-3 rounded-xl font-medium transition-all duration-200",
+        "text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 dark:text-slate-400 dark:hover:text-red-400"
       )}
     >
-      <LogOut size={18} />
-      <span>Encerrar Sessão</span>
+      <LogOut className="h-4 w-4 shrink-0 transition-colors" />
+      <span className="truncate">Sair do Sistema</span>
     </Button>
   );
 }

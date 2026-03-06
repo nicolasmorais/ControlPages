@@ -35,13 +35,6 @@ export function CreateRouteDialog({ contentOptions, onRouteCreated }: CreateRout
   const [contentId, setContentId] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Cores Dinâmicas
-  const cardBg = 'bg-white dark:bg-[#1e293b]';
-  const borderColor = 'border-gray-200 dark:border-[#334155]';
-  const inputBg = 'bg-gray-100 dark:bg-[#020617]';
-  const selectContentBg = 'bg-white dark:bg-[#1e293b]';
-  const primaryButtonClasses = 'bg-[#0061FE] hover:bg-[#0054DA] text-white';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!path || !contentId) {
@@ -50,8 +43,6 @@ export function CreateRouteDialog({ contentOptions, onRouteCreated }: CreateRout
     }
 
     setIsSaving(true);
-
-    // Normaliza o path para garantir que comece com /
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
 
     try {
@@ -62,7 +53,7 @@ export function CreateRouteDialog({ contentOptions, onRouteCreated }: CreateRout
       });
 
       if (response.status === 201) {
-        toast.success(`Nova rota ${normalizedPath} criada com sucesso!`);
+        toast.success(`Nova rota criada com sucesso!`);
         onRouteCreated();
         setIsOpen(false);
         setPath('');
@@ -82,52 +73,52 @@ export function CreateRouteDialog({ contentOptions, onRouteCreated }: CreateRout
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className={primaryButtonClasses}>
+        <Button className="h-10 px-4 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-medium transition-all hover:opacity-90 shadow-md shadow-slate-900/10">
           <Plus className="mr-2 h-4 w-4" />
-          Adicionar Nova Rota
+          Nova Rota
         </Button>
       </DialogTrigger>
-      <DialogContent className={cn("sm:max-w-[425px]", cardBg, borderColor, "text-gray-900 dark:text-white")}>
+      <DialogContent className="sm:max-w-[425px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/60 dark:border-white/10 rounded-[2rem] p-8">
         <DialogHeader>
-          <DialogTitle>Criar Nova Rota</DialogTitle>
-          <DialogDescription className="text-gray-500 dark:text-zinc-400">
-            Defina um novo caminho (URL) e atribua um conteúdo a ele.
+          <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Criar Nova Rota</DialogTitle>
+          <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
+            Defina um novo caminho amigável para seus conteúdos.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
+        <form onSubmit={handleSubmit} className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label htmlFor="new-path" className="text-gray-600 dark:text-zinc-300">Caminho (URL)</Label>
-            <div className="flex items-center">
-              <span className="text-gray-500 dark:text-zinc-500 pr-2">/</span>
+            <Label htmlFor="new-path" className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Caminho (URL)</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 font-mono text-sm">/</span>
               <Input
                 id="new-path"
                 value={path.startsWith('/') ? path.substring(1) : path}
                 onChange={(e) => setPath(e.target.value)}
-                placeholder="ex: promocao-especial"
-                className={cn(inputBg, borderColor, "text-gray-900 dark:text-white")}
+                placeholder="ex: promocao-verao"
+                className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl h-10 text-sm focus-visible:ring-slate-400/20"
                 required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="new-name" className="text-gray-600 dark:text-zinc-300">Nome Interno (Opcional)</Label>
+            <Label htmlFor="new-name" className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Apelido (Opcional)</Label>
             <Input
               id="new-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nome para identificação no painel"
-              className={cn(inputBg, borderColor, "text-gray-900 dark:text-white")}
+              placeholder="Ex: Campanha Facebook Março"
+              className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl h-10 text-sm focus-visible:ring-slate-400/20"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="new-content" className="text-gray-600 dark:text-zinc-300">Conteúdo a Atribuir</Label>
+            <Label htmlFor="new-content" className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Conteúdo</Label>
             <Select value={contentId} onValueChange={setContentId} required>
-              <SelectTrigger className={cn(inputBg, borderColor, "text-gray-900 dark:text-white")}>
+              <SelectTrigger className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl h-10 text-sm focus:ring-slate-400/20">
                 <SelectValue placeholder="Selecione o conteúdo" />
               </SelectTrigger>
-              <SelectContent className={cn(selectContentBg, "text-gray-900 dark:text-white", borderColor)}>
+              <SelectContent className="rounded-xl border-slate-200/60 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl">
                 {contentOptions.map(opt => (
-                  <SelectItem key={opt.id} value={opt.id} className="focus:bg-gray-100 dark:focus:bg-[#1e293b]">
+                  <SelectItem key={opt.id} value={opt.id} className="text-sm rounded-lg focus:bg-slate-100 dark:focus:bg-white/10">
                     {opt.name}
                   </SelectItem>
                 ))}
@@ -135,9 +126,9 @@ export function CreateRouteDialog({ contentOptions, onRouteCreated }: CreateRout
             </Select>
           </div>
           <DialogFooter className="pt-4">
-            <Button type="submit" disabled={isSaving} className={primaryButtonClasses}>
+            <Button type="submit" disabled={isSaving} className="w-full h-11 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-medium transition-all hover:opacity-90 shadow-md shadow-slate-900/10">
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? "Criando..." : "Criar Rota"}
+              {isSaving ? "Criando..." : "Finalizar Rota"}
             </Button>
           </DialogFooter>
         </form>

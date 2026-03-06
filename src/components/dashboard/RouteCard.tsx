@@ -50,42 +50,56 @@ export function RouteCard({ route, onSave, onDelete, contentOptions }: RouteCard
     }
   };
 
+  const handleDelete = async () => {
+    await onDelete(route.path, route.name);
+  };
+
   return (
-    <div className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-5 space-y-4 transition-all hover:border-slate-200 dark:hover:border-slate-700 group">
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <Globe className="h-4 w-4 text-[#0061FE] shrink-0" />
-          <span className="font-mono text-xs font-bold text-slate-500 truncate">{route.path}</span>
+    <div className="flex flex-col h-full space-y-6">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-white flex items-center justify-center shrink-0">
+            <Globe className="h-4 w-4 text-white dark:text-black" />
+          </div>
+          <div className="min-w-0">
+            <span className="block font-mono text-[11px] font-bold text-slate-900 dark:text-white truncate tracking-tight">{route.path}</span>
+            <span className="block text-[9px] font-mono text-slate-400 dark:text-slate-500 uppercase">Nodo_Rota</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <Link href={route.path} target="_blank">
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-[#0061FE]">
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+
+        <Link href={route.path} target="_blank">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+            <ExternalLink className="h-4 w-4" />
+          </Button>
+        </Link>
       </div>
 
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-400" htmlFor={`name-${route.path}`}>Apelido Interno</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label className="text-[9px] font-mono uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-1.5" htmlFor={`name-${route.path}`}>
+            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+            Apelido
+          </Label>
           <Input
-            className="h-10 text-sm bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl"
+            className="h-9 text-xs bg-slate-100/50 dark:bg-white/[0.02] border-slate-200/50 dark:border-white/5 rounded-lg focus-visible:ring-slate-400/20 font-medium"
             id={`name-${route.path}`}
             value={routeName}
             onChange={(e) => setRouteName(e.target.value)}
           />
         </div>
 
-        <div className="space-y-1">
-          <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Conteúdo de Destino</Label>
+        <div className="space-y-1.5">
+          <Label className="text-[9px] font-mono uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+            Destino
+          </Label>
           <Select value={selectedContent} onValueChange={setSelectedContent}>
-            <SelectTrigger className="h-10 text-sm bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl">
-              <SelectValue placeholder="Selecione o conteúdo" />
+            <SelectTrigger className="h-9 text-xs bg-slate-100/50 dark:bg-white/[0.02] border-slate-200/50 dark:border-white/5 rounded-lg focus:ring-slate-400/20 text-left font-medium">
+              <SelectValue placeholder="Alvo" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 bg-white">
+            <SelectContent className="rounded-xl border-slate-200/60 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl">
               {contentOptions.map(opt => (
-                <SelectItem key={opt.id} value={opt.id} className="text-sm rounded-lg">
+                <SelectItem key={opt.id} value={opt.id} className="text-xs rounded-lg focus:bg-slate-100 dark:focus:bg-white/10 py-2">
                   {opt.name}
                 </SelectItem>
               ))}
@@ -94,15 +108,28 @@ export function RouteCard({ route, onSave, onDelete, contentOptions }: RouteCard
         </div>
       </div>
 
-      {isChanged && (
+      <div className="flex items-center gap-2 pt-2 mt-auto">
         <Button
           onClick={handleSave}
-          disabled={isSaving}
-          className="w-full h-10 bg-[#0061FE] hover:bg-[#0054DA] text-white rounded-xl font-bold text-xs animate-in slide-in-from-top-2"
+          disabled={isSaving || !isChanged}
+          className={cn(
+            "flex-1 h-9 rounded-lg font-mono text-[10px] uppercase tracking-wider transition-all",
+            isChanged
+              ? "bg-[#0061FE] text-white hover:bg-[#0054DA] shadow-lg shadow-blue-500/10"
+              : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-600 font-normal"
+          )}
         >
-          {isSaving ? "Salvando..." : "Salvar Alterações"}
+          {isSaving ? "Atualizando..." : isChanged ? "Confirmar Alterações" : "Sincronizado"}
         </Button>
-      )}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleDelete}
+          className="h-9 w-9 rounded-lg border-slate-200 dark:border-white/5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }

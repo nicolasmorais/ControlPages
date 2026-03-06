@@ -42,15 +42,6 @@ export function AutoRouteManager({ autoRoutes, contentOptions, onRefresh }: Auto
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
-  // Cores Dinâmicas
-  const cardBg = 'bg-white dark:bg-[#1e293b]';
-  const borderColor = 'border-gray-200 dark:border-[#334155]';
-  const inputBg = 'bg-gray-100 dark:bg-[#020617]';
-  const selectContentBg = 'bg-white dark:bg-[#1e293b]';
-  const primaryButtonClasses = 'bg-[#0061FE] hover:bg-[#0054DA] text-white';
-  const textColor = 'text-gray-900 dark:text-white';
-  const labelColor = 'text-gray-600 dark:text-zinc-300';
-
   const handleCreateRoute = async () => {
     if (!slug || !selectedContentId) {
       toast.error("O slug e o conteúdo são obrigatórios.");
@@ -66,28 +57,26 @@ export function AutoRouteManager({ autoRoutes, contentOptions, onRefresh }: Auto
       });
 
       if (response.status === 409) {
-        toast.error("Este slug já está em uso por outro conteúdo.");
+        toast.error("Este slug já está em uso.");
       } else if (!response.ok) {
         const errorData = await response.json();
-        toast.error(errorData.message || "Falha ao criar a rota.");
+        toast.error(errorData.message || "Falha ao criar.");
       } else {
-        const result = await response.json();
-        toast.success(`Rota /${result.slug} criada com sucesso!`);
+        toast.success(`Redirecionamento criado!`);
         setSlug('');
         setSelectedContentId('');
+        setIsOpen(false);
         onRefresh();
       }
     } catch (error) {
-      toast.error("Erro de conexão ao criar a rota.");
+      toast.error("Erro de conexão.");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeleteRoute = async (slugToDelete: string) => {
-    if (!window.confirm(`Tem certeza que deseja excluir a rota /${slugToDelete}?`)) {
-      return;
-    }
+    if (!window.confirm(`Excluir redirecionamento /${slugToDelete}?`)) return;
 
     setIsDeleting(slugToDelete);
     try {
@@ -97,79 +86,79 @@ export function AutoRouteManager({ autoRoutes, contentOptions, onRefresh }: Auto
         body: JSON.stringify({ slug: slugToDelete }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(errorData.message || "Falha ao excluir a rota.");
-      } else {
-        toast.success(`Rota /${slugToDelete} excluída com sucesso!`);
+      if (response.ok) {
+        toast.success(`Removido com sucesso.`);
         onRefresh();
+      } else {
+        toast.error("Falha ao excluir.");
       }
     } catch (error) {
-      toast.error("Erro de conexão ao excluir a rota.");
+      toast.error("Erro de conexão.");
     } finally {
       setIsDeleting(null);
     }
   };
 
-  // Filtra rotas que já existem para mostrar como "ocupadas"
   const occupiedSlugs = Object.keys(autoRoutes);
 
   return (
-    <Card className={cn(cardBg, borderColor, textColor)}>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>⚡ Rotas Automáticas</span>
-          <Button onClick={onRefresh} variant="outline" size="sm" className={borderColor}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Atualizar
+    <Card className="bg-white/50 dark:bg-black/20 backdrop-blur-sm border-slate-200/60 dark:border-white/5 rounded-[2rem] overflow-hidden shadow-sm">
+      <CardHeader className="border-b border-slate-100 dark:border-white/5 pb-6">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              <Zap className="h-5 w-5 text-yellow-500" />
+              Redirecionamentos Rápidos
+            </CardTitle>
+            <CardDescription className="text-slate-500 dark:text-slate-500 font-medium">
+              Mapeie slugs temporários para conteúdos fixos instantaneamente.
+            </CardDescription>
+          </div>
+          <Button onClick={onRefresh} variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+            <RefreshCw className={cn("h-4 w-4", isDeleting && "animate-spin")} />
           </Button>
-        </CardTitle>
-        <CardDescription className={labelColor}>
-          Crie redirecionamentos automáticos (ex: /menopausa → /ap). Ao excluir, a rota volta ao conteúdo original.
-        </CardDescription>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-6 space-y-8">
 
         {/* Lista de Rotas Existentes */}
-        <div className="space-y-3">
-          <h3 className="font-semibold text-lg">Rotas Criadas</h3>
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Atalhos Ativos</h3>
           {occupiedSlugs.length === 0 ? (
-            <p className="text-center text-gray-500 dark:text-zinc-500 py-4">
-              Nenhuma rota automática criada ainda.
-            </p>
+            <div className="py-8 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-2xl">
+              <p className="text-sm text-slate-400 font-medium">Nenhum atalho criado ainda.</p>
+            </div>
           ) : (
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {occupiedSlugs.map((slugKey) => {
                 const route = autoRoutes[slugKey];
                 const contentName = contentOptions.find(opt => opt.id === route)?.name || route;
                 return (
                   <div
                     key={slugKey}
-                    className={cn(
-                      "flex items-center justify-between p-3 rounded-lg border",
-                      borderColor
-                    )}
+                    className="flex items-center justify-between p-4 rounded-2xl bg-slate-50/50 dark:bg-white/5 border border-slate-100 dark:border-white/5 group transition-all hover:border-slate-200 dark:hover:border-white/10"
                   >
-                    <div className="flex-1">
-                      <div className="font-mono text-sm">
-                        <span className="text-green-600 dark:text-green-400">/{slugKey}</span>
-                        <span className="mx-2 text-gray-500">→</span>
-                        <span className="text-blue-600 dark:text-blue-400">/{route}</span>
+                    <div className="flex-1 min-w-0 pr-4">
+                      <div className="flex items-center gap-2 font-mono text-xs mb-1">
+                        <span className="text-slate-900 dark:text-white font-bold">/{slugKey}</span>
+                        <span className="text-slate-300 dark:text-slate-700">→</span>
+                        <span className="text-slate-500 truncate">/{route}</span>
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-zinc-400">
-                        Conteúdo: {contentName}
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 truncate font-medium">
+                        {contentName}
                       </div>
                     </div>
                     <Button
-                      variant="destructive"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDeleteRoute(slugKey)}
                       disabled={isDeleting === slugKey}
+                      className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                     >
                       {isDeleting === slugKey ? (
-                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
                       ) : (
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3.5 w-3.5" />
                       )}
                     </Button>
                   </div>
@@ -182,71 +171,64 @@ export function AutoRouteManager({ autoRoutes, contentOptions, onRefresh }: Auto
         {/* Botão para Criar Nova Rota */}
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button className={primaryButtonClasses}>
+            <Button className="w-full h-11 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-medium transition-all hover:opacity-90 shadow-md shadow-slate-900/10">
               <Plus className="mr-2 h-4 w-4" />
-              Criar Nova Rota
+              Novo Redirecionamento
             </Button>
           </DialogTrigger>
-          <DialogContent className={cn("sm:max-w-[500px]", cardBg, borderColor, textColor)}>
+          <DialogContent className="sm:max-w-[450px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/60 dark:border-white/10 rounded-[2rem] p-8">
             <DialogHeader>
-              <DialogTitle>Criar Rota Automática</DialogTitle>
-              <DialogDescription className={labelColor}>
-                Defina um slug amigável que apontará para um conteúdo existente.
+              <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Criar Atalho Rápido</DialogTitle>
+              <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
+                Mapeie um slug simples para um conteúdo complexo.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="space-y-6 py-4">
               <div className="space-y-2">
-                <Label className={labelColor}>Slug (URL)</Label>
-                <div className="flex items-center">
-                  <span className="text-gray-500 dark:text-zinc-500 pr-2">/</span>
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Atalho (Slug)</Label>
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-400 font-mono text-sm">/</span>
                   <Input
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
                     placeholder="ex: menopausa"
-                    className={cn(inputBg, borderColor, textColor)}
+                    className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl h-10 text-sm focus-visible:ring-slate-400/20"
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-zinc-500">
-                  O usuário acessará: https://seusite.com/<strong>{slug || 'seu-slug'}</strong>
-                </p>
               </div>
 
               <div className="space-y-2">
-                <Label className={labelColor}>Conteúdo de Destino</Label>
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Conteúdo de Destino</Label>
                 <Select value={selectedContentId} onValueChange={setSelectedContentId}>
-                  <SelectTrigger className={cn(inputBg, borderColor, textColor)}>
-                    <SelectValue placeholder="Selecione o conteúdo de destino" />
+                  <SelectTrigger className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl h-10 text-sm focus:ring-slate-400/20 text-left">
+                    <SelectValue placeholder="Selecione o destino" />
                   </SelectTrigger>
-                  <SelectContent className={cn(selectContentBg, textColor, borderColor)}>
+                  <SelectContent className="rounded-xl border-slate-200/60 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl">
                     {contentOptions.map(opt => (
                       <SelectItem
                         key={opt.id}
                         value={opt.id}
-                        className="focus:bg-gray-100 dark:focus:bg-[#1e293b]"
+                        className="text-sm rounded-lg focus:bg-slate-100 dark:focus:bg-white/10"
                       >
                         {opt.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-gray-500 dark:text-zinc-500">
-                  O conteúdo original será exibido quando acessado pelo slug.
-                </p>
               </div>
             </div>
-            <DialogFooter>
-              <Button onClick={() => setIsOpen(false)} variant="outline">Cancelar</Button>
+            <DialogFooter className="pt-2">
               <Button
                 onClick={handleCreateRoute}
                 disabled={isSaving || !slug || !selectedContentId}
-                className={primaryButtonClasses}
+                className="w-full h-11 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-medium transition-all hover:opacity-90 shadow-md shadow-slate-900/10"
               >
                 {isSaving ? (
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <Save className="mr-2 h-4 w-4" />
                 )}
-                {isSaving ? "Criando..." : "Criar Rota"}
+                {isSaving ? "Criando..." : "Criar Redirecionamento"}
               </Button>
             </DialogFooter>
           </DialogContent>

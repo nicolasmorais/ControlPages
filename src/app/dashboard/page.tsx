@@ -61,7 +61,6 @@ const STATIC_CONTENT_OPTIONS: CustomAdvertorial[] = [
 export default function DashboardPage() {
   const [advertorials, setAdvertorials] = useState<CustomAdvertorial[]>([]);
   const [existingRoutes, setExistingRoutes] = useState<ExistingRoute[]>([]);
-  const [autoRoutes, setAutoRoutes] = useState<AutoRoute>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -70,19 +69,16 @@ export default function DashboardPage() {
   const fetchAllData = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const [advRes, routeRes, autoRouteRes] = await Promise.all([
+      const [advRes, routeRes] = await Promise.all([
         fetch('/api/custom-advertorials'),
-        fetch('/api/routes'),
-        fetch('/api/auto-routes')
+        fetch('/api/routes')
       ]);
 
       const routeData = await routeRes.json();
       const advData = await advRes.json();
-      const autoRouteData = await autoRouteRes.json();
 
       setAdvertorials(advData);
       setExistingRoutes(routeData);
-      setAutoRoutes(autoRouteData);
     } catch (error: any) {
       toast.error(`Falha ao carregar os dados.`);
     } finally {
@@ -90,7 +86,12 @@ export default function DashboardPage() {
     }
   };
 
+  const [isClient, setIsClient] = useState(false);
+  const [currentTime, setCurrentTime] = useState('');
+
   useEffect(() => {
+    setIsClient(true);
+    setCurrentTime(new Date().toISOString());
     fetchAllData();
   }, []);
 
@@ -136,139 +137,88 @@ export default function DashboardPage() {
     <>
       <Toaster richColors position="top-center" />
 
-      <div className="max-w-[1400px] mx-auto space-y-8 pb-20">
+      <div className="w-full mx-auto space-y-10 pb-20 px-4 md:px-8">
 
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-2 bg-[#0061FE] rounded-lg text-white">
-                <Settings2 size={20} />
-              </div>
-              <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                Route Control
-              </h1>
-            </div>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">
-              Gerencie o tráfego e redirecionamentos de seus advertoriais.
-            </p>
+        {/* Minimal Tech Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold tracking-tighter text-slate-900 dark:text-white flex items-center gap-2">
+              <div className="w-2 h-8 bg-[#0061FE] rounded-full" />
+              Route Control
+            </h1>
+            <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.2em]">Terminal de Gerenciamento</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <Button
-              onClick={fetchAllData}
-              variant="outline"
-              className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold px-4"
-            >
-              <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
-            </Button>
-            <UTMLinkGenerator />
+            <div className="relative group">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <Input
+                placeholder="Buscar comando..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-64 bg-slate-100/50 dark:bg-white/[0.03] border-slate-200 dark:border-white/5 rounded-xl pl-10 h-10 text-xs font-mono focus-visible:ring-slate-400/20 transition-all"
+              />
+            </div>
             <CreateRouteDialog
               contentOptions={allContentOptions}
               onRouteCreated={fetchAllData}
             />
+            <Button
+              onClick={fetchAllData}
+              variant="outline"
+              className="h-10 w-10 p-0 rounded-xl border-slate-200 dark:border-white/10 bg-white dark:bg-black/50 hover:bg-slate-50 dark:hover:bg-white/5"
+            >
+              <RefreshCw className={cn("h-4 w-4 text-slate-400", isLoading && "animate-spin")} />
+            </Button>
           </div>
         </div>
 
-        {/* Status Mini Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Rotas Fixas', val: existingRoutes.length, icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-            { label: 'Redirecionamentos', val: Object.keys(autoRoutes).length, icon: Zap, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-900/20' },
-            { label: 'Conteúdos', val: allContentOptions.length, icon: LayoutGrid, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-            { label: 'Status BD', val: 'Online', icon: Activity, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-sm">
-              <div className={cn("p-2 rounded-xl", stat.bg, stat.color)}>
-                <stat.icon size={20} />
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
-                <p className="text-lg font-black">{stat.val}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Tabs defaultValue="routes" className="space-y-6">
-          <TabsList className="bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 h-12">
-            <TabsTrigger value="routes" className="rounded-lg px-6 font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm">
-              <ArrowRightLeft className="h-4 w-4 mr-2" />
-              Gerenciar Rotas
-            </TabsTrigger>
-            <TabsTrigger value="auto" className="rounded-lg px-6 font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm">
-              <Zap className="h-4 w-4 mr-2" />
-              Redirecionamentos Rápidos
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="routes" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex-1">
-                <h2 className="text-xl font-black">Rotas Fixas e Permanentes</h2>
-                <p className="text-sm text-slate-500 font-medium">Gerencie URLs específicas mapeadas para seus conteúdos.</p>
-              </div>
-              <div className="relative w-full md:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                  placeholder="Buscar rota ou apelido..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl pl-10 h-11"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {isLoading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton key={i} className="h-48 w-full rounded-3xl bg-slate-100 dark:bg-slate-900" />
-                ))
-              ) : filteredRoutes.length === 0 ? (
-                <div className="col-span-full py-20 text-center bg-slate-50 dark:bg-slate-900/30 rounded-[3rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
-                  <Globe size={48} className="mx-auto text-slate-300 mb-4" />
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Nenhuma rota encontrada</h3>
-                  <p className="text-slate-500 max-w-xs mx-auto mt-2">Crie uma nova rota fixa para começar a direcionar tráfego.</p>
-                  <Button variant="link" onClick={() => setSearchQuery('')} className="text-[#0061FE] font-bold mt-2">Limpar filtros</Button>
+        {/* Main Interface */}
+        <div className="bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 rounded-[2.5rem] overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-px bg-slate-200/40 dark:bg-white/5">
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-white dark:bg-black/20 p-8 h-48">
+                  <Skeleton className="h-full w-full rounded-2xl opacity-50" />
                 </div>
-              ) : (
-                filteredRoutes.map((route) => (
+              ))
+            ) : filteredRoutes.length === 0 ? (
+              <div className="col-span-full py-32 text-center bg-white dark:bg-black/20">
+                <Globe size={40} className="mx-auto text-slate-200 dark:text-slate-800 mb-4" />
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Nenhuma rota encontrada</h3>
+                <Button variant="link" onClick={() => setSearchQuery('')} className="text-[#0061FE] text-xs mt-2">Limpar busca</Button>
+              </div>
+            ) : (
+              filteredRoutes.map((route) => (
+                <div key={route.path} className="bg-white dark:bg-black/20 p-6 transition-all hover:bg-slate-50 dark:hover:bg-white/[0.02] border-b md:border-b-0 border-slate-100 dark:border-white/5">
                   <RouteCard
-                    key={route.path}
                     route={route}
                     contentOptions={allContentOptions}
                     onSave={handleSaveRoute}
                     onDelete={handleDeleteRoute}
                   />
-                ))
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="auto" className="animate-in fade-in slide-in-from-bottom-2 duration-400">
-            <div className="max-w-4xl">
-              <AutoRouteManager
-                autoRoutes={autoRoutes}
-                contentOptions={allContentOptions}
-                onRefresh={fetchAllData}
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        {/* Footer info tip */}
-        <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="absolute top-0 right-0 p-12 opacity-5">
-            <Link2 size={160} />
-          </div>
-          <div className="relative z-10 text-center md:text-left">
-            <h3 className="text-xl font-black mb-2">Precisa de um link de rastreamento?</h3>
-            <p className="text-slate-400 font-medium">Use nosso gerador de UTMs para criar links prontos para Taboola e Facebook.</p>
-          </div>
-          <div className="relative z-10">
-            <UTMLinkGenerator />
+                </div>
+              ))
+            )}
           </div>
         </div>
+
+        {/* Subtle Terminal Status Overlay */}
+        {isClient && (
+          <div className="flex items-center justify-between font-mono text-[10px] text-slate-400 px-6 animate-in fade-in duration-500">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5 line-clamp-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                SISTEMA_ATIVO
+              </span>
+              <span className="hidden md:block">BANCO_DADOS: POSTGRES</span>
+              <span className="hidden md:block">ROTAS_ATIVAS: {filteredRoutes.length}</span>
+            </div>
+            <div className="opacity-50">
+              {currentTime}
+            </div>
+          </div>
+        )}
 
       </div>
     </>

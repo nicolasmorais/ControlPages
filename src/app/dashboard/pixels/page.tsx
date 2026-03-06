@@ -35,9 +35,13 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { cn } from "@/lib/utils";
 
 interface Pixel {
     id: string;
@@ -151,47 +155,54 @@ export default function PixelDashboard() {
     };
 
     return (
-        <div className="p-6 md:p-10 space-y-8 max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gerenciamento de Pixels</h1>
-                    <p className="text-slate-500 font-medium tracking-tight">Configure seus códigos do Taboola, Facebook, etc.</p>
+        <div className="w-full mx-auto space-y-10 pb-20 px-4 md:px-8">
+            <Toaster richColors position="top-center" />
+
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-bold tracking-tighter text-slate-900 dark:text-white flex items-center gap-2">
+                        <div className="w-2 h-8 bg-[#0061FE] rounded-full" />
+                        Pixels e Tracking
+                    </h1>
+                    <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.2em]">Configurações de Tráfego</p>
                 </div>
+
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button onClick={() => setEditingPixel({ provider: 'taboola', active: true, content_id: 'all' })} className="bg-[#0061FE] hover:bg-[#0054DA] rounded-xl font-bold gap-2 text-white">
-                            <Plus size={20} />
+                        <Button onClick={() => setEditingPixel({ provider: 'taboola', active: true, content_id: 'all' })} className="h-10 px-4 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-medium transition-all hover:opacity-90 shadow-lg shadow-slate-900/10">
+                            <Plus size={18} className="mr-2" />
                             Adicionar Pixel
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl bg-white">
+                    <DialogContent className="max-w-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/60 dark:border-white/10 rounded-[2rem] p-8">
                         <DialogHeader>
-                            <DialogTitle>{editingPixel?.id ? 'Editar Pixel' : 'Novo Pixel'}</DialogTitle>
-                            <DialogDescription>Insira o código fornecido pela plataforma.</DialogDescription>
+                            <DialogTitle className="text-xl font-bold">{editingPixel?.id ? 'Editar Pixel' : 'Novo Pixel'}</DialogTitle>
+                            <DialogDescription>Configure seu código de rastreamento.</DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="space-y-6 py-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-widest text-slate-400">Nome Interno</label>
-                                <Input placeholder="Ex: Lead Taboola Advinsu" value={editingPixel?.name || ''} onChange={(e) => setEditingPixel({ ...editingPixel, name: e.target.value })} />
+                                <Label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Nome do Pixel</Label>
+                                <Input className="bg-slate-50 dark:bg-black/30 border-slate-200 dark:border-white/5 rounded-xl h-10" placeholder="Ex: FB Ads - Vendas V1" value={editingPixel?.name || ''} onChange={(e) => setEditingPixel({ ...editingPixel, name: e.target.value })} />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold uppercase tracking-widest text-slate-400">Provedor</label>
+                                    <Label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Plataforma</Label>
                                     <Select value={editingPixel?.provider || 'taboola'} onValueChange={(v) => setEditingPixel({ ...editingPixel, provider: v })}>
-                                        <SelectTrigger><SelectValue placeholder="Selecione o provedor" /></SelectTrigger>
-                                        <SelectContent className="bg-white">
+                                        <SelectTrigger className="bg-slate-50 dark:bg-black/30 border-slate-200 dark:border-white/5 rounded-xl h-10"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                                        <SelectContent className="rounded-xl border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl">
                                             <SelectItem value="taboola">Taboola</SelectItem>
-                                            <SelectItem value="facebook">Facebook</SelectItem>
-                                            <SelectItem value="google">Google Tag</SelectItem>
-                                            <SelectItem value="other">Outro</SelectItem>
+                                            <SelectItem value="facebook">Facebook Ads</SelectItem>
+                                            <SelectItem value="google">Google GTM/Ads</SelectItem>
+                                            <SelectItem value="other">Outra Plataforma</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold uppercase tracking-widest text-slate-400">Página de Destino</label>
+                                    <Label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Escopo da Página</Label>
                                     <Select value={editingPixel?.content_id || 'all'} onValueChange={(v) => setEditingPixel({ ...editingPixel, content_id: v })}>
-                                        <SelectTrigger><SelectValue placeholder="Global" /></SelectTrigger>
-                                        <SelectContent className="bg-white">
+                                        <SelectTrigger className="bg-slate-50 dark:bg-black/30 border-slate-200 dark:border-white/5 rounded-xl h-10"><SelectValue placeholder="Global" /></SelectTrigger>
+                                        <SelectContent className="rounded-xl border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl">
                                             {STATIC_PAGE_IDS.map(p => (
                                                 <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                                             ))}
@@ -200,135 +211,155 @@ export default function PixelDashboard() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-widest text-slate-400">Código do Pixel (HTML/Script)</label>
+                                <Label className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Script Code (HEAD/BODY)</Label>
                                 <Textarea
-                                    className="min-h-[200px] font-mono text-xs bg-slate-50 border-slate-200"
-                                    placeholder="Cole aqui seu código <script>..."
+                                    className="min-h-[160px] font-mono text-xs bg-slate-50 dark:bg-black/30 border-slate-200 dark:border-white/5 rounded-xl"
+                                    placeholder="Cole seu <script> aqui..."
                                     value={editingPixel?.code || ''}
                                     onChange={(e) => setEditingPixel({ ...editingPixel, code: e.target.value })}
                                 />
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="rounded-xl">Cancelar</Button>
-                            <Button onClick={handleSave} className="bg-[#0061FE] hover:bg-[#0054DA] rounded-xl text-white">Salvar Pixel</Button>
+                            <Button variant="ghost" onClick={() => setIsDialogOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
+                            <Button onClick={handleSave} className="bg-[#0061FE] hover:bg-[#0054DA] rounded-xl text-white font-bold h-10 px-6">Salvar Configurações</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-                {isLoading ? (
-                    <div className="text-center py-10">Carregando pixels...</div>
-                ) : pixels.length === 0 ? (
-                    <div className="text-center py-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl text-slate-400">
-                        Nenhum pixel cadastrado.
-                    </div>
-                ) : (
-                    pixels.map(pixel => (
-                        <Card key={pixel.id} className="border-slate-200 shadow-sm overflow-hidden">
-                            <div className="flex items-center p-6 gap-6">
-                                <div className={cn("p-4 rounded-2xl", pixel.provider === 'taboola' ? 'bg-orange-50 text-orange-500' : 'bg-blue-50 text-blue-500')}>
-                                    {pixel.provider === 'taboola' ? <Tag size={24} /> : <Code size={24} />}
+            {/* Pixels Grid Grid Interface */}
+            <div className="bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 rounded-[2.5rem] overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-px bg-slate-200/40 dark:bg-white/5">
+                    {isLoading ? (
+                        Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="bg-white dark:bg-black/20 p-8 h-48">
+                                <Skeleton className="h-full w-full rounded-2xl opacity-50" />
+                            </div>
+                        ))
+                    ) : pixels.length === 0 ? (
+                        <div className="col-span-full py-32 text-center bg-white dark:bg-black/20">
+                            <Activity size={40} className="mx-auto text-slate-200 dark:text-slate-800 mb-4" />
+                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Nenhum pixel configurado</h3>
+                        </div>
+                    ) : (
+                        pixels.map(pixel => (
+                            <div key={pixel.id} className="bg-white dark:bg-black/20 p-6 flex flex-col space-y-6 transition-all hover:bg-slate-50 dark:hover:bg-white/[0.02] border-b md:border-b-0 border-slate-100 dark:border-white/5">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className={cn(
+                                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm",
+                                            pixel.active ? "bg-slate-900 dark:bg-white" : "bg-slate-200 dark:bg-slate-800"
+                                        )}>
+                                            {pixel.provider === 'taboola' ? <Tag size={16} className={cn(pixel.active ? "text-white dark:text-black" : "text-slate-400")} /> : <Code size={16} className={cn(pixel.active ? "text-white dark:text-black" : "text-slate-400")} />}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <span className="block font-mono text-[11px] font-bold text-slate-900 dark:text-white truncate tracking-tight">{pixel.name}</span>
+                                            <span className="block text-[9px] font-mono text-slate-400 dark:text-slate-500 uppercase">{pixel.provider}</span>
+                                        </div>
+                                    </div>
+
+                                    <Switch checked={pixel.active} onCheckedChange={() => toggleStatus(pixel)} className="scale-75" />
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3">
-                                        <h3 className="font-bold text-slate-900 text-lg truncate">{pixel.name}</h3>
-                                        <Badge variant="outline" className="uppercase text-[10px] bg-slate-50 border-slate-200 text-slate-500 font-bold tracking-widest">
+                                <div className="space-y-3 flex-1 pt-2">
+                                    <div className="space-y-1">
+                                        <Label className="text-[9px] font-mono uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                                            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                                            Vínculo
+                                        </Label>
+                                        <span className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-1 rounded-md border border-slate-200/50 dark:border-white/5">
                                             {STATIC_PAGE_IDS.find(p => p.id === (pixel.content_id || 'all'))?.name}
-                                        </Badge>
+                                        </span>
                                     </div>
-                                    <p className="text-slate-500 text-sm mt-1 uppercase font-bold tracking-widest leading-none">
-                                        {pixel.provider} • ID: {pixel.id.slice(0, 8)}...
-                                    </p>
                                 </div>
 
-                                <div className="flex items-center gap-6">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                            {pixel.active ? 'Ativo' : 'Inativo'}
-                                        </span>
-                                        <Switch checked={pixel.active} onCheckedChange={() => toggleStatus(pixel)} />
-                                    </div>
-
-                                    <div className="flex gap-2">
-                                        <Button variant="secondary" size="icon" className="rounded-xl h-10 w-10" onClick={() => { setEditingPixel(pixel); setIsDialogOpen(true); }}>
-                                            <Settings2 size={18} className="text-slate-600" />
-                                        </Button>
-                                        <Button variant="destructive" size="icon" className="rounded-xl h-10 w-10 bg-red-50 hover:bg-red-100 text-red-500 border-none shadow-none" onClick={() => handleDelete(pixel.id)}>
-                                            <Trash2 size={18} />
-                                        </Button>
-                                    </div>
+                                <div className="flex items-center gap-2 pt-4 border-t border-slate-100 dark:border-white/5">
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1 h-9 rounded-lg font-mono text-[10px] uppercase tracking-wider border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
+                                        onClick={() => { setEditingPixel(pixel); setIsDialogOpen(true); }}
+                                    >
+                                        Editar
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-9 w-9 rounded-lg border-slate-200 dark:border-white/5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                                        onClick={() => handleDelete(pixel.id)}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
                                 </div>
                             </div>
-                        </Card>
-                    ))
-                )}
+                        ))
+                    )}
+                </div>
             </div>
 
-            {/* Back Redirect Section */}
-            <div className="pt-12 border-t border-slate-100">
-                <div className="mb-8">
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Back Redirect</h2>
-                    <p className="text-slate-500 font-medium tracking-tight">
-                        Redirecione o usuário quando ele clicar no botão "voltar" do navegador.
-                    </p>
+            {/* Back Redirect Section Interface */}
+            <div className="bg-slate-900 dark:bg-white/[0.02] border border-slate-800 dark:border-white/5 rounded-[2.5rem] p-8 text-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 mt-12">
+                <div className="relative z-10 space-y-2 text-center md:text-left">
+                    <h3 className="text-2xl font-bold tracking-tighter">Back Redirect</h3>
+                    <p className="text-slate-400 font-medium text-sm max-w-md">Capte os usuários que tentam sair da página direcionando-os para outro funil.</p>
                 </div>
 
-                <Card className="border-slate-200 shadow-sm overflow-hidden bg-white">
-                    <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-                        <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-400">Novo Redirecionamento</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Página de Origem</label>
-                                <Select value={newRedirect.contentId} onValueChange={(v) => setNewRedirect({ ...newRedirect, contentId: v })}>
-                                    <SelectTrigger className="bg-white"><SelectValue placeholder="Selecione a página" /></SelectTrigger>
-                                    <SelectContent className="bg-white">
-                                        {STATIC_PAGE_IDS.map(p => (
-                                            <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2 md:col-span-1">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Link de Destino</label>
-                                <Input
-                                    placeholder="https://sua-pagina-de-vendas.com"
-                                    className="bg-white"
-                                    value={newRedirect.url}
-                                    onChange={(e) => setNewRedirect({ ...newRedirect, url: e.target.value })}
-                                />
-                            </div>
-                            <Button
-                                className="bg-[#0061FE] hover:bg-[#0054DA] rounded-xl font-bold gap-2 text-white h-10"
-                                onClick={async () => {
-                                    if (!newRedirect.url) return toast.error("Insira a URL");
-                                    const res = await fetch('/api/back-redirect', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(newRedirect)
-                                    });
-                                    if (res.ok) {
-                                        toast.success("Back Redirect configurado!");
-                                        setNewRedirect({ ...newRedirect, url: '' });
-                                    }
-                                }}
-                            >
-                                <ArrowLeftSquare size={18} />
-                                Ativar Redirecionamento
-                            </Button>
-                        </div>
-                        <p className="mt-4 text-[10px] text-slate-400 font-medium italic">
-                            * O redirecionamento funciona manipulando o histórico do navegador (History API).
-                        </p>
-                    </CardContent>
-                </Card>
+                <div className="relative z-10 flex-1 w-full max-w-2xl bg-white/5 dark:bg-white/10 backdrop-blur-md p-6 rounded-[1.5rem] border border-white/10 flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 space-y-1.5">
+                        <Label className="text-[9px] font-mono text-slate-400 uppercase">Origem</Label>
+                        <Select value={newRedirect.contentId} onValueChange={(v) => setNewRedirect({ ...newRedirect, contentId: v })}>
+                            <SelectTrigger className="bg-black/20 border-white/10 text-white rounded-xl h-10"><SelectValue placeholder="Página" /></SelectTrigger>
+                            <SelectContent className="bg-slate-900 border-white/10 text-white">
+                                {STATIC_PAGE_IDS.map(p => (
+                                    <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex-[2] space-y-1.5">
+                        <Label className="text-[9px] font-mono text-slate-400 uppercase">URL Destino</Label>
+                        <Input
+                            placeholder="https://..."
+                            className="bg-black/20 border-white/10 text-white rounded-xl h-10"
+                            value={newRedirect.url}
+                            onChange={(e) => setNewRedirect({ ...newRedirect, url: e.target.value })}
+                        />
+                    </div>
+                    <Button
+                        className="bg-white text-black hover:bg-slate-100 rounded-xl font-bold h-10 self-end px-6 transition-all active:scale-95"
+                        onClick={async () => {
+                            if (!newRedirect.url) return toast.error("Insira a URL");
+                            const res = await fetch('/api/back-redirect', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(newRedirect)
+                            });
+                            if (res.ok) {
+                                toast.success("Redirecionamento ativado!");
+                                setNewRedirect({ ...newRedirect, url: '' });
+                            }
+                        }}
+                    >
+                        Ativar
+                    </Button>
+                </div>
+            </div>
+
+            {/* Subtle Terminal Status Overlay */}
+            <div className="flex items-center justify-between font-mono text-[10px] text-slate-400 px-6">
+                <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1.5 line-clamp-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                        PIXEL_ENGINE_READY
+                    </span>
+                    <span className="hidden md:block">TRACKING: ON_DEMAND</span>
+                    <span className="hidden md:block">NODES: {pixels.length}</span>
+                </div>
+                <div className="opacity-50">
+                    MODULE_ID: TRK_SRV_04
+                </div>
             </div>
         </div>
     );
 }
 
-function cn(...classes: any[]) { return classes.filter(Boolean).join(' '); }

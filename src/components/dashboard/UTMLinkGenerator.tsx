@@ -46,19 +46,10 @@ export function UTMLinkGenerator({ }: UTMLinkGeneratorProps) {
     utm_medium: true,
   });
 
-  // Cores Dinâmicas
-  const cardBg = 'bg-white dark:bg-[#1e293b]';
-  const borderColor = 'border-gray-200 dark:border-[#334155]';
-  const inputBg = 'bg-gray-100 dark:bg-[#020617]';
-  const primaryButtonClasses = 'bg-[#0061FE] hover:bg-[#0054DA] text-white';
-  const textColor = 'text-gray-900 dark:text-white';
-  const labelColor = 'text-gray-600 dark:text-zinc-300';
-
   const handleParamToggle = (key: string, isChecked: boolean) => {
     setSelectedParams(prev => {
       const newState = { ...prev };
       if (isChecked) {
-        // Se for UTM, usa o valor padrão ou string vazia
         const option = TRACKING_OPTIONS.find(opt => opt.key === key);
         newState[key] = option?.isMacro ? true : (option?.defaultValue || '');
       } else {
@@ -77,22 +68,16 @@ export function UTMLinkGenerator({ }: UTMLinkGeneratorProps) {
 
     try {
       const url = new URL(baseLink);
-
-      // Adiciona os parâmetros selecionados
       Object.entries(selectedParams).forEach(([key, value]) => {
         if (value === true) {
-          // Macro da Taboola - adiciona sem codificar as chaves
           url.searchParams.set(key, `{${key}}`);
         } else if (typeof value === 'string' && value.trim()) {
-          // UTM com valor fixo
           url.searchParams.set(key, value.trim());
         }
       });
 
-      // Retorna a URL como string, garantindo que as macros não sejam codificadas
       let finalUrl = url.toString();
       finalUrl = finalUrl.replace(/%7B/g, '{').replace(/%7D/g, '}');
-
       return finalUrl;
 
     } catch (error) {
@@ -103,7 +88,7 @@ export function UTMLinkGenerator({ }: UTMLinkGeneratorProps) {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(generatedLink);
-    toast.success("Link com UTMs e macros copiado para a área de transferência!");
+    toast.success("Link copiado com sucesso!");
   };
 
   const isReady = baseLink && generatedLink.startsWith('http');
@@ -111,88 +96,91 @@ export function UTMLinkGenerator({ }: UTMLinkGeneratorProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className={primaryButtonClasses}>
-          <Plus className="mr-2 h-4 w-4" />
-          Gerador de Links UTM
+        <Button variant="outline" className="h-10 px-4 rounded-xl border-slate-200 dark:border-white/10 bg-white dark:bg-black/50 hover:bg-slate-50 dark:hover:bg-white/5 font-medium transition-all">
+          <LinkIcon className="mr-2 h-4 w-4 text-slate-500" />
+          Gerador UTM
         </Button>
       </DialogTrigger>
-      <DialogContent className={cn("sm:max-w-[800px]", cardBg, borderColor, textColor)}>
+      <DialogContent className="sm:max-w-[700px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/60 dark:border-white/10 rounded-[2rem] p-8">
         <DialogHeader>
-          <DialogTitle>Gerador de Links com UTM e Macros Taboola</DialogTitle>
-          <DialogDescription className={labelColor}>
-            Crie URLs com parâmetros UTM e macros dinâmicas da Taboola para rastreamento completo.
+          <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Gerador de Links UTM</DialogTitle>
+          <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
+            Crie URLs rastreáveis com parâmetros UTM e macros do Taboola.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto">
+        <div className="space-y-8 py-4 max-h-[60vh] overflow-y-auto px-1 scrollbar-hide">
 
           {/* 1. Link Base */}
-          <div className="space-y-2">
-            <Label className={labelColor}>Link Base</Label>
+          <div className="space-y-2.5">
+            <Label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Link Base (Destino)</Label>
             <Input
               value={baseLink}
               onChange={(e) => setBaseLink(e.target.value)}
-              placeholder="https://seusite.com/checkout"
-              className={cn(inputBg, borderColor, textColor)}
+              placeholder="https://seuhotsite.com/oferta"
+              className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl h-10 text-sm focus-visible:ring-slate-400/20"
               required
             />
-            <p className="text-xs text-gray-500 dark:text-zinc-500">
-              URL base para onde os usuários serão redirecionados.
-            </p>
           </div>
 
           {/* 2. Parâmetros UTM */}
-          <div className="space-y-4 p-4 border rounded-md bg-gray-50 dark:bg-[#0f172a]">
-            <h3 className="font-semibold text-lg">Parâmetros UTM</h3>
-            <div className="space-y-3">
+          <div className="space-y-5">
+            <h3 className="text-xs font-bold uppercase tracking-tight text-slate-900 dark:text-white">Configurar Rastreamento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 bg-slate-50/50 dark:bg-black/20 rounded-[1.5rem] p-6 border border-slate-100 dark:border-white/5">
               {TRACKING_OPTIONS.map(option => (
-                <div key={option.key} className="flex items-center space-x-3">
+                <div key={option.key} className="flex items-center gap-3 min-h-[2.5rem]">
                   <Checkbox
                     id={`utm-${option.key}`}
                     checked={!!selectedParams[option.key]}
                     onCheckedChange={(checked) => handleParamToggle(option.key, checked as boolean)}
+                    className="rounded-md border-slate-300 dark:border-white/20 data-[state=checked]:bg-slate-900 dark:data-[state=checked]:bg-white"
                   />
-                  <Label htmlFor={`utm-${option.key}`} className="flex-1 cursor-pointer font-mono text-sm">
-                    {option.label}
-                  </Label>
-                  {!option.isMacro && selectedParams[option.key] !== undefined && (
-                    <Input
-                      value={selectedParams[option.key] as string}
-                      onChange={(e) => handleParamValueChange(option.key, e.target.value)}
-                      placeholder="Valor Personalizado"
-                      className={cn(inputBg, borderColor, textColor, "w-40 h-8 text-sm")}
-                    />
-                  )}
+                  <div className="flex-1 flex flex-col min-w-0">
+                    <Label htmlFor={`utm-${option.key}`} className="cursor-pointer font-medium text-xs text-slate-700 dark:text-slate-300 truncate">
+                      {option.label}
+                    </Label>
+                    {!option.isMacro && selectedParams[option.key] !== undefined && (
+                      <Input
+                        value={selectedParams[option.key] as string}
+                        onChange={(e) => handleParamValueChange(option.key, e.target.value)}
+                        placeholder="Valor"
+                        className="h-7 text-[10px] bg-white dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg mt-1 focus-visible:ring-slate-400/10 px-2"
+                      />
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* 3. Link Gerado */}
-          <div className="space-y-2">
-            <Label className={labelColor}>Link Gerado</Label>
+          <div className="space-y-2.5">
+            <Label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Link Final Gerado</Label>
             <div className="flex items-center gap-2">
-              <Input
-                value={generatedLink}
-                readOnly
-                className={cn(inputBg, borderColor, textColor, "font-mono text-sm")}
-              />
-              <Button
-                type="button"
-                onClick={handleCopy}
-                disabled={!isReady}
-                className={primaryButtonClasses}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
+              <div className="relative flex-1">
+                <Input
+                  value={generatedLink}
+                  readOnly
+                  className="bg-slate-50 dark:bg-black/30 border-slate-200/60 dark:border-white/5 rounded-xl block w-full pr-12 font-mono text-[10px] text-slate-500 dark:text-slate-400 h-11"
+                />
+                <Button
+                  type="button"
+                  onClick={handleCopy}
+                  disabled={!isReady}
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1 h-9 w-9 bg-white dark:bg-white/5 rounded-lg text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all shadow-sm"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <p className="text-xs text-gray-500 dark:text-zinc-500">
-              {isReady ? 'Copie e use este link nas suas campanhas Taboola.' : 'Preencha o link base e selecione os parâmetros.'}
-            </p>
           </div>
 
         </div>
-        <DialogFooter>
-          <Button onClick={() => setIsOpen(false)} variant="outline">Fechar</Button>
+        <DialogFooter className="pt-4 sm:justify-center">
+          <Button onClick={() => setIsOpen(false)} variant="ghost" className="rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white">
+            Fechar Gerador
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
