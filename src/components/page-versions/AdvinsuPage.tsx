@@ -36,7 +36,7 @@ export function AdvinsuPage() {
                         {/* Headline Gigante e Legível */}
                         <header className="space-y-8 text-left">
                             <h1 className="text-4xl md:text-6xl font-black text-black leading-[1.1] tracking-tight">
-                                Fiz tudo certo por 2 anos — dieta, remédio, caminhada — e minha glicemia não saía de 210. Hoje está em 109. O que mudou foi uma coisa só.
+                                Fiz tudo certo por dois anos — dieta, remédio e caminhada — e minha glicemia não saía de 210. Hoje está em 109. O que mudou foi uma coisa só.
                             </h1>
                             <div className="flex items-center gap-4 text-xl md:text-2xl text-slate-500 font-medium border-t border-slate-50 pt-8">
                                 <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-slate-100 relative">

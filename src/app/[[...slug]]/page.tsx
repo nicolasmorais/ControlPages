@@ -60,8 +60,8 @@ export async function generateMetadata({ params }: DynamicPageProps): Promise<Me
     'v3': 'Página V3 - Control Pages',
     'ap': 'Página de Aprovação - Control Pages',
     'cavalo-de-raca': 'Cuidado Capilar Avançado - Control Pages',
-    'advinsu': 'Bella Diaries - Desinflamando o Pâncreas',
-    'sales': 'InsuBeta - Tratamento Raiz para Glicose',
+    'advinsu': 'Bella Diaries - Insubeta: Desinflamando o Pâncreas',
+    'sales': 'Insubeta - Tratamento Raiz para Glicose',
   };
 
   if (staticTitles[slugKey]) {

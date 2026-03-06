@@ -9,7 +9,7 @@ import { ContentBlock, CustomAdvertorialHeader, CustomAdvertorial, CustomAdverto
 import Link from 'next/link';
 import { getDefaultBlock } from '@/lib/advertorial-utils';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, ExternalLink, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Save, Loader2, Copy } from 'lucide-react';
 
 // Import modular components
 import { HeaderEditor } from '@/components/dashboard/custom-advertorials/HeaderEditor';
@@ -157,6 +157,43 @@ export default function CustomAdvertorialEditor() {
         }
     };
 
+    const handleDuplicateInEditor = async (): Promise<void> => {
+        if (isNew) return;
+
+        setIsSaving(true);
+        toast.loading("Duplicando advertorial...", { id: "duplicate-toast" });
+
+        try {
+            // Criar payload para duplicação (sem ID para o backend gerar um novo)
+            const duplicatePayload: CustomAdvertorial = {
+                id: '', // Backend gera um novo UUID
+                name: `${name} (Cópia)`,
+                header,
+                blocks,
+                footer,
+                pixels
+            };
+
+            const response = await fetch('/api/custom-advertorials', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(duplicatePayload),
+            });
+
+            if (!response.ok) throw new Error('Save error');
+            const result = await response.json();
+
+            toast.success("Duplicado com sucesso!", { id: "duplicate-toast" });
+
+            // Redirecionar para o novo advertorial criado
+            router.push(`/dashboard/custom-advertorials/${result.advertorial.id}`);
+        } catch (error) {
+            toast.error("Erro ao duplicar.", { id: "duplicate-toast" });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     if (isLoading || !footer) {
         return (
             <div className="space-y-6 max-w-5xl mx-auto p-4 animate-in fade-in duration-500">
@@ -192,12 +229,23 @@ export default function CustomAdvertorialEditor() {
 
                     <div className="flex items-center gap-3">
                         {!isNew && (
-                            <Link href={`/${advertorialId}`} target="_blank">
-                                <Button variant="outline" className="rounded-xl font-bold h-11 px-5 border-slate-200 dark:border-slate-800">
-                                    <ExternalLink className="h-4 w-4 mr-2" />
-                                    Visualizar
+                            <>
+                                <Button
+                                    variant="outline"
+                                    onClick={handleDuplicateInEditor}
+                                    disabled={isSaving}
+                                    className="rounded-xl font-bold h-11 px-5 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+                                >
+                                    <Copy className="h-4 w-4 mr-2" />
+                                    Duplicar
                                 </Button>
-                            </Link>
+                                <Link href={`/${advertorialId}`} target="_blank">
+                                    <Button variant="outline" className="rounded-xl font-bold h-11 px-5 border-slate-200 dark:border-slate-800">
+                                        <ExternalLink className="h-4 w-4 mr-2" />
+                                        Visualizar
+                                    </Button>
+                                </Link>
+                            </>
                         )}
                         <Button
                             onClick={handleSave}

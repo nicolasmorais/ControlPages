@@ -20,7 +20,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Toaster, toast } from "sonner";
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Trash2, Edit, ExternalLink, AlertTriangle, Search, FileText, LayoutGrid } from 'lucide-react';
+import { Plus, Trash2, Edit, ExternalLink, AlertTriangle, Search, FileText, LayoutGrid, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CustomAdvertorial } from '@/lib/advertorial-types';
 import { Input } from '@/components/ui/input';
@@ -63,6 +63,38 @@ export default function CustomAdvertorialsPage() {
       fetchAdvertorials();
     } catch (error) {
       toast.error(`Falha ao excluir o advertorial "${name}".`);
+    }
+  };
+
+  const handleDuplicate = async (id: string, name: string): Promise<void> => {
+    try {
+      toast.loading("Duplicando advertorial...", { id: "duplicate-toast" });
+
+      const response = await fetch(`/api/custom-advertorials/${id}`);
+      if (!response.ok) throw new Error('Failed to fetch item to duplicate');
+
+      const original = await response.json();
+
+      // Criar payload para duplicação (sem ID para o backend gerar um novo)
+      const { id: _, ...dataWithoutId } = original;
+      const duplicatePayload = {
+        ...dataWithoutId,
+        name: `${original.name} (Cópia)`
+      };
+
+      const saveResponse = await fetch('/api/custom-advertorials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(duplicatePayload),
+      });
+
+      if (!saveResponse.ok) throw new Error('Failed to save duplicate');
+
+      toast.success(`Advertorial "${name}" duplicado com sucesso!`, { id: "duplicate-toast" });
+      fetchAdvertorials();
+    } catch (error) {
+      console.error("Erro ao duplicar:", error);
+      toast.error(`Falha ao duplicar o advertorial "${name}".`, { id: "duplicate-toast" });
     }
   };
 
@@ -164,6 +196,15 @@ export default function CustomAdvertorialsPage() {
                     className="h-9 w-9 rounded-lg border-slate-200 dark:border-white/5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    onClick={() => handleDuplicate(adv.id, adv.name)}
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 rounded-lg border-slate-200 dark:border-white/5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors"
+                    title="Duplicar"
+                  >
+                    <Copy className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
